@@ -1,35 +1,32 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { getRandomJoke } from "./utils/api";
+import { useQuery } from "@tanstack/react-query";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { isLoading, isError, data, error, refetch } = useQuery({
+    queryKey: ["getRandomJoke"],
+    queryFn: getRandomJoke,
+  });
+
+  if (isLoading) {
+    return <span>Loading...</span>;
+  }
+
+  if (isError) {
+    return <div>{error.message}</div>;
+  }
 
   return (
-    <>
+    <div>
       <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <p>{data.setup}</p>
+        <p>{data.punchline}</p>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      <button style={{ marginTop: "100px" }} onClick={refetch}>
+        Next Joke?
+      </button>
+    </div>
+  );
 }
 
-export default App
+export default App;
